@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+	<windowclass name="token_selector">
+		<frame>fielddark</frame>
+		<sizelimits>
+			<minimum width="50" height="50" />
+			<dynamic />
+		</sizelimits>
+		<script file="utility/scripts/token_selector.lua" />
+		<sheetdata>
+		</sheetdata>
+	</windowclass>
+
+	<template name="token_selector_token">
+		<tokencontrol name="token">
+			<script file="utility/scripts/token_selector_token.lua" />
+			<anchored>
+				<top />
+				<left />
+			</anchored>
+			<nodrag /> 
+			<nodrop />
+		</tokencontrol>
+	</template>
+</root>
