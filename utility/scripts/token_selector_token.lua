@@ -53,10 +53,7 @@ function isOwner()
 end
 
 function closeSelector()
-	local existingWindow = Interface.findWindow("token_selector", "");
-	if existingWindow then
-		existingWindow.close();
-	end
+	window.close();
 end
 
 function targetToken(image)

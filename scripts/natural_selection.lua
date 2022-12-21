@@ -15,6 +15,8 @@ function onTokenClickRelease(token, button, image)
 
 	if #aStackedTokens > 1 then
 		return self.openTokenSelector(aStackedTokens, image);
+	else
+		self.closeTokenSelector();
 	end
 end
 
@@ -66,4 +68,11 @@ end
 function isOwner(ctnode)
 	local rActor = ActorManager.resolveActor(ctnode);
 	return Session.IsHost or DB.isOwner(rActor.sCreatureNode)
+end
+
+function closeTokenSelector()
+	local existingWindow = Interface.findWindow("token_selector", "");
+	if existingWindow then
+		existingWindow.close();
+	end
 end
