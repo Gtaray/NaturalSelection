@@ -49,6 +49,20 @@ function initialize()
 		control.setAnchoredHeight(CONTROL_SIZE);
 		control.setPrototype(token.data.getPrototype());
 
+		-- Set widgets
+		-- local aWidgets = TokenManager.getWidgetList(token.data)
+		-- for _, vWidget in pairs(aWidgets) do
+		-- 	if type(vWidget) == "bitmapwidget" then
+		-- 		Debug.chat(vWidget)
+		-- 		widget = token.data.addBitmapWidget(vWidget.getBitmap());
+		-- 		widget.setName("foo");
+		-- 		widget.setSize(vWidget.getSize())
+		-- 		widget.setVisible(true);
+		-- 		Debug.chat(widget);
+		-- 	elseif type(vWidget) == "textwidget" then
+		-- 	end
+		-- end
+
 		control.setData(token, bTargetingMode);
 		token.control = control;
 	end
