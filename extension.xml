@@ -14,5 +14,18 @@
 		<script name="NaturalSelection" file="scripts/natural_selection.lua" />
 
 		<icon name="NaturalSelection" file="naturalSelection.png" />
+
+		<!-- STRINGS -->
+		<string name="option_header_natural_selection">Natural Selection</string>
+		<string name="option_label_location">Location of the token selector window relative to the selected token.</string>
+		<string name="option_val_location_left">Left</string>
+		<string name="option_val_location_topleft">Top Left</string>
+		<string name="option_val_location_top">Top</string>
+		<string name="option_val_location_topright">Top Right</string>
+		<string name="option_val_location_right">Right</string>
+		<string name="option_val_location_bottomright">Bottom Right</string>
+		<string name="option_val_location_bottom">Bottom</string>
+		<string name="option_val_location_bottomleft">Bottom Left</string>
+		<string name="option_val_location_center">Center</string>
 	</base>
 </root>

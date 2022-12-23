@@ -1,3 +1,4 @@
+local MIN_CONTROL_SIZE = 50;
 local CONTROL_SIZE = 50;
 local PADDING = 4;
 local MAX_PER_ROW = 3;
@@ -22,6 +23,10 @@ function setTargetingMode(bMode)
 	bTargetingMode = bMode;
 end
 
+function setTokenSize(nSize)
+	CONTROL_SIZE = nSize;
+end
+
 function setTokenSelectedCallback(fCallback)
 	fTokenSelectedCallback = fCallback;
 end
@@ -32,20 +37,33 @@ function onTokenSelected(token)
 	end
 end
 
-function initialize()	
+function initialize()
+	-- First, get the smallest token image in the list so we can clamp
+	-- the CONTROL_SIZE to that amount
+	local nMinSize = math.huge;
+	for index, token in ipairs(aTokens or {}) do
+		local nSize = token.data.getImageSize();
+		if nSize < nMinSize then
+			nMinSize = nSize;
+		end
+	end	
+
+	CONTROL_SIZE = math.max(MIN_CONTROL_SIZE, math.min(CONTROL_SIZE, nMinSize));
+
 	self.calculateSize();
 	setSize(width, height);
 
 	local x = MARGINS / 2;
 	
 	for index, token in ipairs(aTokens or {}) do
+		local nMaxSize = token.data.getImageSize();
 		local col = (index - 1) % MAX_PER_ROW; -- -1 is to get the index back to being based on 0, not 1
 		local row = math.floor((index - 1) / MAX_PER_ROW);
 
 		local control = createControl("token_selector_token", "token_" .. index);
 		control.setAnchor("left", "", "left", "absolute", (MARGINS / 2) + (col * CONTROL_SIZE) + ((col) * PADDING));
 		control.setAnchor("top", "", "top", "absolute", (MARGINS / 2) + (row * CONTROL_SIZE) + ((row) * PADDING));
-		control.setAnchoredWidth(CONTROL_SIZE);
+		control.setAnchoredWidth(CONTROL_SIZE, nMaxSize);
 		control.setAnchoredHeight(CONTROL_SIZE);
 		control.setPrototype(token.data.getPrototype());
 
@@ -67,8 +85,8 @@ function initialize()
 		token.control = control;
 	end
 
-	local x, y = calculatePosition();
-	setPosition(x, y, false);
+	-- local x, y = calculatePosition();
+	-- setPosition(x, y, false);
 end
 
 function calculateSize()
