@@ -3,7 +3,7 @@
 <root release="3.3.3" version="3.3.3">
 	<properties>
 		<name>Feature: Natural Selection</name>
-		<version>1.1.0</version>
+		<version>1.2.0</version>
 		<author>Saagael</author>
 		<description>Adds a way to select a specify token when multiple tokens are stacked together on a map</description>
 	</properties>

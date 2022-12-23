@@ -15,3 +15,7 @@ You can also target tokens within a stack either by holding Control when you sel
 
 Lastly, after you open the token selector window, you can drop rolls (and any other drag/drop action) directly onto tokens within that window.
 ![Rolls](https://user-images.githubusercontent.com/1416356/208998840-e0085e93-c19c-41b3-bffd-d2a661089d02.gif)
+
+## Game Options
+
+There is a single game option to control where, relative to the token being selected, the token selector window pops up.
