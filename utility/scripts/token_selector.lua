@@ -67,6 +67,9 @@ function initialize()
 		control.setAnchoredHeight(CONTROL_SIZE);
 		control.setPrototype(token.data.getPrototype());
 
+		local sTokenName = self.getTokenName(token.ctnode);
+		control.setTooltipText(sTokenName);
+
 		-- Set widgets
 		-- local aWidgets = TokenManager.getWidgetList(token.data)
 		-- for _, vWidget in pairs(aWidgets) do
@@ -87,6 +90,16 @@ function initialize()
 
 	-- local x, y = calculatePosition();
 	-- setPosition(x, y, false);
+end
+
+function getTokenName(ctnode)
+	local rActor = ActorManager.resolveActor(ctnode);
+
+	if Session.IsHost then
+		return DB.getValue(ctnode, "name", "");
+	else
+		return ActorManager.resolveDisplayName(rActor);
+	end
 end
 
 function calculateSize()
