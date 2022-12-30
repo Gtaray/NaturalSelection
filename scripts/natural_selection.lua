@@ -68,21 +68,14 @@ function getStackedTokens(token, image)
 end
 
 function isOverlapping(token1, token2, image)
-	local x, y = token1.getPosition();
-	local x2, y2 = token2.getPosition();
+	local gridType = image.getGridType();
 
-	if image.getGridType() == "square" then
-		local gridsize = image.getGridSize();
-
-		-- Round up to nearest integer
-		-- divide by two since we only need to use the scale to offset from the center of the token to the edges
-		local s1 = (math.ceil(token1.getScale()) * gridsize) / 2; 
-		local s2 = (math.ceil(token2.getScale()) * gridsize) / 2;
-
-		return math.min(x + s1, x2 + s2) > math.max(x - s1, x2 - s2) and
-			   math.min(y + s1, y2 + s2) > math.max(y - s1, y2 - s2)
-	else
-		return x == x2 and y == y2;
+	if gridType == "square" then
+		return MathHelpers.isSquareOverlapping(token1, token2, image);
+	elseif gridType == "hexcolumn" or gridType == "hexrow" then
+		return MathHelpers.isHexagonOverlapping(token1, token2, image);
+	elseif gridType == "iso" then
+		return MathHelpers.isOverlappingSimple(token1, token2);
 	end
 end
 
@@ -105,7 +98,6 @@ function openTokenSelector(aStackedTokens, image)
 
 	local window = Interface.openWindow("token_selector", "");
 	window.setTokens(aStackedTokens);
-	window.setTargetingMode(Input.isControlPressed());
 
 	if image.getGridType() == "square" then
 		local _, _, imageScale = image.getViewpoint();

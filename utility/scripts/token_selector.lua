@@ -7,34 +7,33 @@ local MARGINS = 16;
 local aTokens = {};
 local height, width;
 
-local bTargetingMode = false;
+local tModifierKeys = { }
 
-local fTokenSelectedCallback = nil;
-
+----------------------------
+-- DATA INIT
+----------------------------
 function onInit()
 	self.onSizeChanged = onSizeChanged;
+	self.setModifierKey("shift", Input.isShiftPressed);
+	self.setModifierKey("control", Input.isControlPressed);
+	self.setModifierKey("alt", Input.isAltPressed);
 end
 
 function setTokens(tokens)
 	aTokens = tokens;
 end
 
-function setTargetingMode(bMode)
-	bTargetingMode = bMode;
+function setModifierKey(sModifier, fGetFlag)
+	if not sModifier or not fGetFlag then
+		return;
+	end
+	
+	sModifier = sModifier:lower();
+	tModifierKeys[sModifier] = { bFlag = fGetFlag(), fGet = fGetFlag };
 end
 
 function setTokenSize(nSize)
 	CONTROL_SIZE = nSize;
-end
-
-function setTokenSelectedCallback(fCallback)
-	fTokenSelectedCallback = fCallback;
-end
-
-function onTokenSelected(token)
-	if fTokenSelectedCallback then
-		fTokenSelectedCallback(token);
-	end
 end
 
 function initialize()
@@ -70,27 +69,14 @@ function initialize()
 		local sTokenName = self.getTokenName(token.ctnode);
 		control.setTooltipText(sTokenName);
 
-		-- Set widgets
-		-- local aWidgets = TokenManager.getWidgetList(token.data)
-		-- for _, vWidget in pairs(aWidgets) do
-		-- 	if type(vWidget) == "bitmapwidget" then
-		-- 		Debug.chat(vWidget)
-		-- 		widget = token.data.addBitmapWidget(vWidget.getBitmap());
-		-- 		widget.setName("foo");
-		-- 		widget.setSize(vWidget.getSize())
-		-- 		widget.setVisible(true);
-		-- 		Debug.chat(widget);
-		-- 	elseif type(vWidget) == "textwidget" then
-		-- 	end
-		-- end
-
 		control.setData(token, bTargetingMode);
 		token.control = control;
 	end
-
-	-- local x, y = calculatePosition();
-	-- setPosition(x, y, false);
 end
+
+----------------------------
+-- DATA GETS
+----------------------------
 
 function getTokenName(ctnode)
 	local rActor = ActorManager.resolveActor(ctnode);
@@ -101,6 +87,35 @@ function getTokenName(ctnode)
 		return ActorManager.resolveDisplayName(rActor);
 	end
 end
+
+-- This gets either the stored flag (from when onInit() ran) or the current flag state
+function getModifierKey(sModifier)
+	if not sModifier then
+		return false;
+	end
+	sModifier = sModifier:lower();
+
+	local keydata = tModifierKeys[sModifier];
+	if keydata == nil then
+		return false;
+	end
+
+	return keydata.bFlag or keydata.fGet();
+end
+
+function isOwner(token)
+	if Session.IsHost then
+		return true;
+	end
+
+	local ctnode = CombatManager.getCTFromToken(vToken);
+	local rActor = ActorManager.resolveActor(ctnode);
+	return DB.isOwner(rActor.sCreatureNode)
+end
+
+----------------------------
+-- MATH
+----------------------------
 
 function calculateSize()
 	local columns = math.min(#aTokens, MAX_PER_ROW);
@@ -119,4 +134,60 @@ function calculatePosition()
 	y = y - height;
 
 	return x, y;
+end
+
+-----------------------------------
+-- ACTIONS
+-----------------------------------
+function onTokenSelected(token, ctnode)
+	local image = ImageManager.getImageControl(token);
+	if not image then
+		return true;
+	end
+
+	if self.getModifierKey("control") then
+		self.targetToken(image, ctnode);
+		self.bringTokenToTop(token);
+	else
+		self.selectToken(image, token);
+		self.bringTokenToTop(token);
+	end
+
+	self.close();
+
+	return true;
+end
+
+function onDroppedOnToken(token, dragdata)
+	self.bringTokenToTop(token)
+	if TokenManager.onDrop(token, dragdata) then
+		self.close();
+	end
+end
+
+function targetToken(image, ctnode)
+	for _, selected in ipairs(image.getSelectedTokens()) do
+		local nodeSource = CombatManager.getCTFromToken(selected);
+		if nodeSource then
+			TargetingManager.toggleCTTarget(nodeSource, ctnode)
+		end
+	end
+end
+
+function selectToken(image, token)
+	-- We only want to select a token if the owner is the one clicking it
+	-- otherwise we leave the selection alone.
+	if self.isOwner() then
+		if not self.getModifierKey("shift") then
+			image.clearSelectedTokens();
+		end
+		image.selectToken(token.getId(), true);
+	end
+end
+
+function bringTokenToTop(token)
+	-- Hacky hack to get the token to the top of the stack.
+	local x, y = token.getPosition();
+	token.setPosition(x + 1, y + 1);
+	token.setPosition(x, y);
 end

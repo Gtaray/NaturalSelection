@@ -12,6 +12,7 @@
 		<includefile source="utility/token_selector.xml" />
 
 		<script name="NaturalSelection" file="scripts/natural_selection.lua" />
+		<script name="MathHelpers" file="scripts/math_helpers.lua" />
 
 		<icon name="NaturalSelection" file="naturalSelection.png" />
 
