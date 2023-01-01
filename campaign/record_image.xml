@@ -1,0 +1,22 @@
+<root>
+	<!-- <windowclass name="imagewindow" merge="join">
+		<script>
+			function onInit()
+				if super and super.onInit then
+					super.onInit()
+				end
+				Debug.chat('onInit');
+			end
+
+			function onClickDown(button, x, y)
+				Debug.chat('onClickDown()');
+
+				NaturalSelection.closeTokenSelector();
+				if super and super.onClickDown then
+					return super.onClickDown(button, x, y)
+				end
+				return button == 1;
+			end
+		</script>
+	</windowclass> -->
+</root>

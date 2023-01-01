@@ -108,8 +108,16 @@ function isOwner(token)
 		return true;
 	end
 
-	local ctnode = CombatManager.getCTFromToken(vToken);
+	local ctnode = CombatManager.getCTFromToken(token);
+	if not ctnode then
+		Debug.console("WARNING: failed to get CT node from token", token);
+		return false;
+	end
 	local rActor = ActorManager.resolveActor(ctnode);
+	if not rActor then
+		Debug.console("WARNING: failed to resolve the actor from a combat tracker node", ctnode)
+		return false;
+	end
 	return DB.isOwner(rActor.sCreatureNode)
 end
 
