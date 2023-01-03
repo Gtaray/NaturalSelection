@@ -1,6 +1,14 @@
 function onInit()
-	OptionsManager.registerOption2("SELECTOR_LOCATION", true, "option_header_natural_selection", "option_label_location", "option_entry_cycler",
+	OptionsManager.registerOption2("NS_SELECTOR_LOCATION", true, "option_header_natural_selection", "option_label_location", "option_entry_cycler",
 			{ labels = "option_val_location_left|option_val_location_topleft|option_val_location_top|option_val_location_topright|option_val_location_right|option_val_location_bottomright|option_val_location_bottom|option_val_location_bottomleft", values = "left|topleft|top|topright|right|bottomright|bottom|bottomleft", baselabel = "option_val_location_center", baseval = "center", default = "topright" })
+	OptionsManager.registerOption2("NS_SELECTOR_THRESHOLD", true, "option_header_natural_selection	", "option_label_overlap_threshold", "option_entry_cycler",
+			{ labels = "option_val_threshold_5|option_val_threshold_10|option_val_threshold_15|option_val_threshold_20|option_val_threshold_25", values = "5|10|15|20|25", baselabel = "option_val_threshold_disabled", baseval = "0", default = "0" })
+	OptionsManager.registerOption2("NS_SQUARE_CALC", true, "option_header_natural_selection", "option_label_square_grid_calc", "option_entry_cycler",
+			{ labels = "option_val_calc_square|option_val_calc_circle", values = "square|circle", baselabel = "option_val_calc_exact", baseval = "exact", default = "square" })
+	OptionsManager.registerOption2("NS_HEX_CALC", true, "option_header_natural_selection", "option_label_hex_grid_calc", "option_entry_cycler",
+			{ labels = "option_val_calc_square|option_val_calc_circle", values = "square|circle", baselabel = "option_val_calc_exact", baseval = "exact", default = "circle" })
+	OptionsManager.registerOption2("NS_ISO_CALC", true, "option_header_natural_selection", "option_label_iso_grid_calc", "option_entry_cycler",
+			{ labels = "option_val_calc_square|option_val_calc_circle", values = "square|circle", baselabel = "option_val_calc_exact", baseval = "exact", default = "exact" })
 
 	Token.onClickRelease = onTokenClickRelease;
 end
@@ -11,15 +19,16 @@ end
 
 function onTokenClickRelease(token, button, image)
 	if token == nil or image == nil or button ~= 1 then
-		return;
+		return false;
 	end
 
 	local aStackedTokens = self.getStackedTokens(token, image);
 
 	if #aStackedTokens > 1 then
-		return self.openTokenSelector(aStackedTokens, image);
+		return self.openTokenSelector(aStackedTokens, image);-- 
 	else
 		self.closeTokenSelector();
+		return false;
 	end
 end
 
@@ -34,13 +43,12 @@ function getStackedTokens(token, image)
 	local largestToken = token;
 	local aStackedTokens = {};
 	local aOtherTokens = {};
-
-	table.insert(aStackedTokens, { data = token, ctnode = CombatManager.getCTFromToken(token) });
 	
 	for _,vToken in ipairs(tokens) do
 		local ctnode = CombatManager.getCTFromToken(vToken);
 
-		if ctnode and vToken.getId() ~= tokenId and (Session.IsHost or vToken.isVisible()) then
+		local bTokenVis, bForcedVisible = vToken.isVisible()
+		if ctnode and (Session.IsHost or (bTokenVis and bForcedVisible ~= false)) then
 			if self.isOverlapping(token, vToken, image) then
 				table.insert(aStackedTokens, { data = vToken, ctnode = ctnode });
 
@@ -68,14 +76,14 @@ function getStackedTokens(token, image)
 end
 
 function isOverlapping(token1, token2, image)
-	local gridType = image.getGridType();
+	local sCalc = self.getGridCalcOption(image.getGridType())
 
-	if gridType == "square" then
-		return MathHelpers.isSquareOverlapping(token1, token2, image);
-	elseif gridType == "hexcolumn" or gridType == "hexrow" then
-		return MathHelpers.isHexagonOverlapping(token1, token2, image);
-	elseif gridType == "iso" then
-		return MathHelpers.isOverlappingSimple(token1, token2);
+	if sCalc == "square" then
+		return MathHelpers.calcOverlapSquare(token1, token2, image);
+	elseif sCalc == "circle" then
+		return MathHelpers.calcOverlapCircle(token1, token2, image);
+	elseif sCalc == "exact" then
+		return MathHelpers.calcOverlapExact(token1, token2);
 	end
 end
 
@@ -89,8 +97,6 @@ end
 ----------------------------------------------
 
 function openTokenSelector(aStackedTokens, image)
-	--image.clearSelectedTokens();
-
 	local existingWindow = Interface.findWindow("token_selector", "");
 	if existingWindow then
 		existingWindow.close();
@@ -196,6 +202,39 @@ function calculateWindowOffsets(image, token, x, y,
 	return x + xOffset, y + yOffset;
 end
 
+--------------------------------------------------------------
+-- OPTIONS
+--------------------------------------------------------------
+
 function getWindowLocationOption()
-	return OptionsManager.getOption("SELECTOR_LOCATION");
+	return OptionsManager.getOption("NS_SELECTOR_LOCATION");
+end
+
+function getOverlapThresholdOption()
+	return 1 - (tonumber(OptionsManager.getOption("NS_SELECTOR_THRESHOLD")) / 100);
+end
+
+function getGridCalcOption(sGridType)
+	if sGridType == "square" then
+		return self.getSquareGridCalcOption()
+	elseif sGridType == "hexcolumn" or sGridType == "hexrow" then
+		return self.getHexGridCalcOption();
+	elseif sGridType == "iso" then
+		return self.getIsoGridCalcOption();
+	end
+
+	-- DANGER! This should never happen, so default to the least permissive calc type
+	return "exact";
+end
+
+function getSquareGridCalcOption()
+	return OptionsManager.getOption("NS_SQUARE_CALC");
+end
+
+function getHexGridCalcOption()
+	return OptionsManager.getOption("NS_HEX_CALC");
+end
+
+function getIsoGridCalcOption()
+	return OptionsManager.getOption("NS_ISO_CALC");
 end

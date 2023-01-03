@@ -9,7 +9,6 @@
 	</properties>
 	<announcement text="Natural Selection v1.4.1 by Saagael." icon="NaturalSelection" font="emotefont" />
 	<base>
-		<includefile source="campaign/record_image.xml" />
 		<includefile source="utility/token_selector.xml" />
 
 		<script name="NaturalSelection" file="scripts/natural_selection.lua" />
@@ -29,5 +28,20 @@
 		<string name="option_val_location_bottom">Bottom</string>
 		<string name="option_val_location_bottomleft">Bottom Left</string>
 		<string name="option_val_location_center">Center</string>
+
+		<string name="option_label_overlap_threshold">Minimum percentage tokens need to overlap to trigger the selection window.</string>
+		<string name="option_val_threshold_disabled">Disabled</string>
+		<string name="option_val_threshold_5">5%</string>
+		<string name="option_val_threshold_10">10%</string>
+		<string name="option_val_threshold_15">15%</string>
+		<string name="option_val_threshold_20">20%</string>
+		<string name="option_val_threshold_25">25%</string>
+
+		<string name="option_label_square_grid_calc">Method of overlap calculation to use on square grids.</string>
+		<string name="option_label_hex_grid_calc">Method of overlap calculation to use on hex grids.</string>
+		<string name="option_label_iso_grid_calc">Method of overlap calculation to use on isometric grids.</string>
+		<string name="option_val_calc_exact">Exact</string>
+		<string name="option_val_calc_square">Square</string>
+		<string name="option_val_calc_circle">Circular</string>
 	</base>
 </root>
