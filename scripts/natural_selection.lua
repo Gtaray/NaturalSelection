@@ -1,7 +1,7 @@
 function onInit()
 	OptionsManager.registerOption2("NS_SELECTOR_LOCATION", true, "option_header_natural_selection", "option_label_location", "option_entry_cycler",
 			{ labels = "option_val_location_left|option_val_location_topleft|option_val_location_top|option_val_location_topright|option_val_location_right|option_val_location_bottomright|option_val_location_bottom|option_val_location_bottomleft", values = "left|topleft|top|topright|right|bottomright|bottom|bottomleft", baselabel = "option_val_location_center", baseval = "center", default = "topright" })
-	OptionsManager.registerOption2("NS_SELECTOR_THRESHOLD", true, "option_header_natural_selection	", "option_label_overlap_threshold", "option_entry_cycler",
+	OptionsManager.registerOption2("NS_SELECTOR_THRESHOLD", true, "option_header_natural_selection", "option_label_overlap_threshold", "option_entry_cycler",
 			{ labels = "option_val_threshold_5|option_val_threshold_10|option_val_threshold_15|option_val_threshold_20|option_val_threshold_25", values = "5|10|15|20|25", baselabel = "option_val_threshold_disabled", baseval = "0", default = "0" })
 	OptionsManager.registerOption2("NS_SQUARE_CALC", true, "option_header_natural_selection", "option_label_square_grid_calc", "option_entry_cycler",
 			{ labels = "option_val_calc_square|option_val_calc_circle", values = "square|circle", baselabel = "option_val_calc_exact", baseval = "exact", default = "square" })
