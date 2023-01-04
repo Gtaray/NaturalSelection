@@ -186,10 +186,17 @@ function selectToken(image, token)
 	-- We only want to select a token if the owner is the one clicking it
 	-- otherwise we leave the selection alone.
 	if self.isOwner() then
+		local tokenId = token.getId();
+
 		if not self.getModifierKey("shift") then
 			image.clearSelectedTokens();
 		end
-		image.selectToken(token.getId(), true);
+
+		-- Only select the token if it's not already selected.
+		-- This is effectively a toggle.
+		if not image.isTokenSelected(tokenId) then
+			image.selectToken(tokenId, not bIsTokenSelected);
+		end
 	end
 end
 

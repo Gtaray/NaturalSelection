@@ -3,11 +3,11 @@
 <root release="3.3.3" version="3.3.3">
 	<properties>
 		<name>Feature: Natural Selection</name>
-		<version>1.5.1</version>
+		<version>1.5.2</version>
 		<author>Saagael</author>
 		<description>Adds a way to select a specify token when multiple tokens are stacked together on a map</description>
 	</properties>
-	<announcement text="Natural Selection v1.5.1 by Saagael." icon="NaturalSelection" font="emotefont" />
+	<announcement text="Natural Selection v1.5.2 by Saagael." icon="NaturalSelection" font="emotefont" />
 	<base>
 		<includefile source="utility/token_selector.xml" />
 
@@ -31,11 +31,13 @@
 
 		<string name="option_label_overlap_threshold">Minimum percentage tokens need to overlap to trigger the selection window.</string>
 		<string name="option_val_threshold_disabled">Disabled</string>
-		<string name="option_val_threshold_5">5%</string>
 		<string name="option_val_threshold_10">10%</string>
-		<string name="option_val_threshold_15">15%</string>
 		<string name="option_val_threshold_20">20%</string>
-		<string name="option_val_threshold_25">25%</string>
+		<string name="option_val_threshold_30">30%</string>
+		<string name="option_val_threshold_40">40%</string>
+		<string name="option_val_threshold_50">50%</string>
+
+		<string name="option_label_size_rounding">Round token size up to the nearest grid size increment when calculating overlap.</string>
 
 		<string name="option_label_square_grid_calc">Method of overlap calculation to use on square grids.</string>
 		<string name="option_label_hex_grid_calc">Method of overlap calculation to use on hex grids.</string>

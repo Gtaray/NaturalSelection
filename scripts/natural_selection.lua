@@ -2,13 +2,23 @@ function onInit()
 	OptionsManager.registerOption2("NS_SELECTOR_LOCATION", true, "option_header_natural_selection", "option_label_location", "option_entry_cycler",
 			{ labels = "option_val_location_left|option_val_location_topleft|option_val_location_top|option_val_location_topright|option_val_location_right|option_val_location_bottomright|option_val_location_bottom|option_val_location_bottomleft", values = "left|topleft|top|topright|right|bottomright|bottom|bottomleft", baselabel = "option_val_location_center", baseval = "center", default = "topright" })
 	OptionsManager.registerOption2("NS_SELECTOR_THRESHOLD", true, "option_header_natural_selection", "option_label_overlap_threshold", "option_entry_cycler",
-			{ labels = "option_val_threshold_5|option_val_threshold_10|option_val_threshold_15|option_val_threshold_20|option_val_threshold_25", values = "5|10|15|20|25", baselabel = "option_val_threshold_disabled", baseval = "0", default = "0" })
+			{ labels = "option_val_threshold_10|option_val_threshold_20|option_val_threshold_30|option_val_threshold_40|option_val_threshold_50", values = "10|20|30|40|50", baselabel = "option_val_threshold_disabled", baseval = "0", default = "0" })
 	OptionsManager.registerOption2("NS_SQUARE_CALC", true, "option_header_natural_selection", "option_label_square_grid_calc", "option_entry_cycler",
 			{ labels = "option_val_calc_square|option_val_calc_circle", values = "square|circle", baselabel = "option_val_calc_exact", baseval = "exact", default = "square" })
 	OptionsManager.registerOption2("NS_HEX_CALC", true, "option_header_natural_selection", "option_label_hex_grid_calc", "option_entry_cycler",
 			{ labels = "option_val_calc_square|option_val_calc_circle", values = "square|circle", baselabel = "option_val_calc_exact", baseval = "exact", default = "circle" })
 	OptionsManager.registerOption2("NS_ISO_CALC", true, "option_header_natural_selection", "option_label_iso_grid_calc", "option_entry_cycler",
 			{ labels = "option_val_calc_square|option_val_calc_circle", values = "square|circle", baselabel = "option_val_calc_exact", baseval = "exact", default = "exact" })
+	OptionsManager.registerOption2("NS_SIZE_ROUNDING", true, "option_header_natural_selection", "option_label_size_rounding", "option_entry_cycler",
+			{ labels = "option_val_no", values = "no", baselabel = "option_val_yes", baseval = "yes", default = "no" })
+
+	
+	local nThreshold = tonumber(OptionsManager.getOption("NS_SELECTOR_THRESHOLD"));
+	if nThreshold % 10 ~= 0 then
+		local newThreshold = MathHelpers.roundToNearestMultiple(nThreshold, 10);
+		Debug.console("Natural Selection: Outdated threshold percent (" .. nThreshold .. "). Adjusting to " .. newThreshold);
+		OptionsManager.setOption("NS_SELECTOR_THRESHOLD", tostring(newThreshold));
+	end
 
 	Token.onClickRelease = onTokenClickRelease;
 end
@@ -211,7 +221,7 @@ function getWindowLocationOption()
 end
 
 function getOverlapThresholdOption()
-	return 1 - (tonumber(OptionsManager.getOption("NS_SELECTOR_THRESHOLD")) / 100);
+	return (tonumber(OptionsManager.getOption("NS_SELECTOR_THRESHOLD")) / 100);
 end
 
 function getGridCalcOption(sGridType)
@@ -237,4 +247,8 @@ end
 
 function getIsoGridCalcOption()
 	return OptionsManager.getOption("NS_ISO_CALC");
+end
+
+function getTokenRounding()
+	return OptionsManager.getOption("NS_SIZE_ROUNDING") == "yes";
 end
