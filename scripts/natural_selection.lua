@@ -23,6 +23,13 @@ function onInit()
 	end
 
 	Token.onClickRelease = onTokenClickRelease;
+
+	CombatManager.setCustomTurnStart(onTurnStart);
+end
+
+-- Close the selector every time the turn changes	
+function onTurnStart(nodeCt)
+	NaturalSelection.closeTokenSelector();
 end
 
 ----------------------------------------------
@@ -64,6 +71,9 @@ function getStackedTokens(token, image)
 	if not selectedTokenCt then
 		return {};
 	end
+
+	-- Store the single selected token so we can use it later
+	local selectedToken = NaturalSelection.getSingleSelectedToken(image);
 	
 	for _,vToken in ipairs(tokens) do
 		local ctnode = CombatManager.getCTFromToken(vToken);
@@ -76,7 +86,10 @@ function getStackedTokens(token, image)
 				if sFaction == "" then
 					sFaction = "empty";
 				end
-				table.insert(aStackedTokens, { data = vToken, ctnode = ctnode, faction = sFaction });
+
+				local bTargeted = NaturalSelection.isTargeted(selectedToken, vToken);
+
+				table.insert(aStackedTokens, { data = vToken, ctnode = ctnode, faction = sFaction, targeted = bTargeted });
 
 				-- save the token with the largest scale
 				if vToken.getScale() > largestToken.getScale() then
@@ -112,6 +125,24 @@ function isOverlapping(token1, token2, image)
 		return MathHelpers.calcOverlapExact(token1, token2);
 	end
 end
+
+function isTargeted(selectedToken, targetToken)
+	if selectedToken == nil or targetToken == nil then
+		return false;
+	end
+
+	return targetToken.isTargetedBy(selectedToken.getId());
+end
+
+function getSingleSelectedToken(image)
+	local selectedTokens = image.getSelectedTokens();
+	if #selectedTokens ~= 1 then
+		return nil;
+	end
+
+	return selectedTokens[1];
+end
+
 ----------------------------------------------
 -- OPEN/CLOSE WINDOW
 ----------------------------------------------

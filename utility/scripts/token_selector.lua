@@ -74,6 +74,14 @@ function initialize()
 			end
 		end
 
+		if token.targeted then
+			local widget = control.addBitmapWidget("drag_targeting");
+			if widget then
+				widget.setSize(25, 25);
+				widget.setPosition("topright", -10, 10);
+			end
+		end
+
 		local sTokenName = self.getTokenName(token.ctnode);
 		control.setTooltipText(sTokenName);
 
