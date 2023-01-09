@@ -65,6 +65,14 @@ function initialize()
 		control.setAnchoredWidth(CONTROL_SIZE, nMaxSize);
 		control.setAnchoredHeight(CONTROL_SIZE);
 		control.setPrototype(token.data.getPrototype());
+		
+		if token.faction then
+			local widget = control.addBitmapWidget("ct_faction_" .. token.faction);
+			if widget then
+				widget.setSize(25, 25);
+				widget.setPosition("topleft", 10, 12);
+			end
+		end
 
 		local sTokenName = self.getTokenName(token.ctnode);
 		control.setTooltipText(sTokenName);

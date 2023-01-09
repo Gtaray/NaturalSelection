@@ -24,8 +24,3 @@ function onTokenSelected()
 		window.onTokenSelected(token, ctnode);
 	end
 end
-
-function isOwner()
-	local rActor = ActorManager.resolveActor(ctnode);
-	return Session.IsHost or DB.isOwner(rActor.sCreatureNode)
-end
