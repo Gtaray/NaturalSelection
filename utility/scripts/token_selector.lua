@@ -65,7 +65,7 @@ function initialize()
 		control.setAnchoredWidth(CONTROL_SIZE, nMaxSize);
 		control.setAnchoredHeight(CONTROL_SIZE);
 		control.setPrototype(token.data.getPrototype());
-		
+
 		if token.faction then
 			local widget = control.addBitmapWidget("ct_faction_" .. token.faction);
 			if widget then
@@ -193,7 +193,7 @@ end
 function selectToken(image, token)
 	-- We only want to select a token if the owner is the one clicking it
 	-- otherwise we leave the selection alone.
-	if self.isOwner() then
+	if self.isOwner(token) then
 		local tokenId = token.getId();
 
 		if not self.getModifierKey("shift") then
