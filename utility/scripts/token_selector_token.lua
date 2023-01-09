@@ -11,7 +11,14 @@ function onClickDown()
 	return true;
 end
 
-function onClickRelease()
+function onClickRelease(button)
+	-- Since double clicking tokens doesn't really work any more, we move that to middle mouse click
+	if button == 2 then
+		TokenManager.onDoubleClick(token, ImageManager.getImageControl(token));	
+		NaturalSelection.closeTokenSelector();
+		return;
+	end
+
 	self.onTokenSelected();
 end
 

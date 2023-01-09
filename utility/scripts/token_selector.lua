@@ -193,7 +193,7 @@ function targetToken(image, ctnode)
 	for _, selected in ipairs(image.getSelectedTokens()) do
 		local nodeSource = CombatManager.getCTFromToken(selected);
 		if nodeSource then
-			TargetingManager.toggleCTTarget(nodeSource, ctnode)
+			TargetingManager.notifyToggleTarget(nodeSource, ctnode)
 		end
 	end
 end

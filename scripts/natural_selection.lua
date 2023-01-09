@@ -37,6 +37,12 @@ end
 ----------------------------------------------
 
 function onTokenClickRelease(token, button, image)
+	-- Since double clicking tokens doesn't really work any more, we move that to middle mouse click
+	if button == 2 then
+		TokenManager.onDoubleClick(token, image);	
+		return true;
+	end
+
 	if token == nil or image == nil or button ~= 1 then
 		return false;
 	end
@@ -48,7 +54,7 @@ function onTokenClickRelease(token, button, image)
 	local aStackedTokens = NaturalSelection.getStackedTokens(token, image);
 
 	if #aStackedTokens > 1 then
-		return NaturalSelection.openTokenSelector(aStackedTokens, image);-- 
+		return NaturalSelection.openTokenSelector(token, aStackedTokens, image);
 	else
 		NaturalSelection.closeTokenSelector();
 		return false;
@@ -147,7 +153,7 @@ end
 -- OPEN/CLOSE WINDOW
 ----------------------------------------------
 
-function openTokenSelector(aStackedTokens, image)
+function openTokenSelector(selectedToken, aStackedTokens, image)
 	local existingWindow = Interface.findWindow("token_selector", "");
 	if existingWindow then
 		existingWindow.close();
@@ -163,7 +169,7 @@ function openTokenSelector(aStackedTokens, image)
 	end
 	window.initialize();
 
-	NaturalSelection.placeWindow(window, image, aStackedTokens[1].data);
+	NaturalSelection.placeWindow(window, image, selectedToken);
 
 	return window;
 end

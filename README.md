@@ -7,7 +7,9 @@ This extension for Fantasy Grounds adds an intuitive way to deal with multiple t
 
 ## Targeting
 
-You can also target tokens within a stack either by holding Control when you select the token stack, or by holding Control when you select the token from the popup window
+You can also target tokens within a stack either by holding Control when you select the token stack, or by holding Control when you select the token from the popup window.
+
+Tokens that are targeted by the currently selected token will display a small reticle icon in the top-right of their token in the selector window.
 ![Targeting](https://user-images.githubusercontent.com/1416356/208998639-4447cff8-61dd-47ee-a449-3fd4441b5b9e.gif)
 
 ## Drag/Drop
@@ -16,6 +18,10 @@ Lastly, after you open the token selector window, you can drop rolls (and any ot
 ![Rolls](https://user-images.githubusercontent.com/1416356/208998840-e0085e93-c19c-41b3-bffd-d2a661089d02.gif)
 
 ## Game Options
+
+### Enabled
+
+A simple toggle to enable or disable this extension, in the case that something goes wrong and you can't access tokens due to stacking.
 
 ### Selector Window Popup Location
 
@@ -26,6 +32,10 @@ This option determines where, relative to the token being selected, the token se
 This option allows you to set what percentage must the tokens overlap for the selector window to appear. If disabled, then the selector will pop up if even a single pixel of the token overlaps another token. If you find Natural Selection is having strange interactions with other extensions, increasing the threshold could solve the issue.
 
 This option is ignored for the _exact_ overlap calculation method.
+
+### Round Token Size up to Nearest Grid Size
+
+If enabled, this will round a token's size up to the nearest multiple of the grid size. This will increase the range at which overlaps are detected.
 
 ### Calculation Methods
 
