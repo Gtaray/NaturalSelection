@@ -169,6 +169,9 @@ function openTokenSelector(selectedToken, aStackedTokens, image)
 	end
 	window.initialize();
 
+	-- When you close the image window, it should also close this selector window.
+	image.window.onClose = NaturalSelection.onImageWindowClosed;
+
 	NaturalSelection.placeWindow(window, image, selectedToken);
 
 	return window;
@@ -257,6 +260,18 @@ function calculateWindowOffsets(image, token, x, y,
 
 	-- this moves it to the upper right corner
 	return x + xOffset, y + yOffset;
+end
+
+--------------------------------------------------------------
+-- ImageWindow events
+--------------------------------------------------------------
+
+function onImageWindowClosed()
+	NaturalSelection.closeTokenSelector();
+
+	if super and super.onClose then
+		super.onClose()
+	end
 end
 
 --------------------------------------------------------------
