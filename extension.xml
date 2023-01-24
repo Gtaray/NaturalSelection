@@ -51,5 +51,7 @@
 		<string name="option_val_calc_exact">Exact</string>
 		<string name="option_val_calc_square">Square</string>
 		<string name="option_val_calc_circle">Circular</string>
+
+		<string name="option_label_include_non_ct">Include selection for tokens that are not on the combat tracker.</string>
 	</base>
 </root>

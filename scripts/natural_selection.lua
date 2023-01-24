@@ -13,6 +13,8 @@ function onInit()
 			{ labels = "option_val_calc_square|option_val_calc_circle", values = "square|circle", baselabel = "option_val_calc_exact", baseval = "exact", default = "exact" })
 	OptionsManager.registerOption2("NS_SIZE_ROUNDING", true, "option_header_natural_selection", "option_label_size_rounding", "option_entry_cycler",
 			{ labels = "option_val_no", values = "no", baselabel = "option_val_yes", baseval = "yes", default = "no" })
+	OptionsManager.registerOption2("NS_INCLUDE_NON_CT", true, "option_header_natural_selection", "option_label_include_non_ct", "option_entry_cycler",
+			{ labels = "option_val_no", values = "no", baselabel = "option_val_yes", baseval = "yes", default = "no" })
 
 	
 	local nThreshold = tonumber(OptionsManager.getOption("NS_SELECTOR_THRESHOLD"));
@@ -72,41 +74,63 @@ function getStackedTokens(token, image)
 	local largestToken = token;
 	local aStackedTokens = {};
 	local aOtherTokens = {};
+	local bIncludeNonCtTokens = NaturalSelection.includeNonCtTokens();
 
-	local selectedTokenCt = CombatManager.getCTFromToken(token)
-	if not selectedTokenCt then
-		return {};
+	if not bIncludeNonCtTokens then
+		local selectedTokenCt = CombatManager.getCTFromToken(token)
+		if not selectedTokenCt then
+			return {};
+		end
 	end
 
 	-- Store the single selected token so we can use it later
 	local selectedToken = NaturalSelection.getSingleSelectedToken(image);
 	
 	for _,vToken in ipairs(tokens) do
-		local ctnode = CombatManager.getCTFromToken(vToken);
-
 		local bTokenVis, bForcedVisible = vToken.isVisible()
-		if ctnode and (Session.IsHost or (bTokenVis and bForcedVisible ~= false)) then
-			if tokenId == vToken.getId() or NaturalSelection.isOverlapping(token, vToken, image) then
 
-				local sFaction = DB.getValue(ctnode, "friendfoe", "");
-				if sFaction == "" then
-					sFaction = "empty";
+		-- We only care about tokens that are either visible, or if the user is the host
+		if Session.IsHost or (bTokenVis and bForcedVisible ~= false) then
+			local ctnode = CombatManager.getCTFromToken(vToken);
+
+			-- First we want to ignore any tokens that aren't on the CT, unless the game setting specifically says to ignore that
+			if ctnode or bIncludeNonCtTokens then
+				-- Then we only care about tokens that are either the one that was clicked, or if it overlaps the one that was clicked.
+				if tokenId == vToken.getId() or NaturalSelection.isOverlapping(token, vToken, image) then
+					-- If the token is on the CT, grab some extra data from it
+					local sFaction = nil;
+					local bTargeted = false;
+
+					if ctnode then
+						sFaction = DB.getValue(ctnode, "friendfoe", "");
+
+						-- "empty" is here because no faction on the CT is indicated by the ct_faction_empty
+						if sFaction == "" then
+							sFaction = "empty";
+						end
+
+						bTargeted = NaturalSelection.isTargeted(selectedToken, vToken);
+					end
+
+					-- Add the token to the list
+					table.insert(aStackedTokens, { data = vToken, ctnode = ctnode, faction = sFaction, targeted = bTargeted });
+					bAdded = true;
+
+					-- save the token with the largest scale
+					if vToken.getScale() > largestToken.getScale() then
+						largestToken = vToken;
+					end
+				else
+					-- Save these tokens for the next step, where we check for overlap again with the largest token in the stack
+					table.insert(aOtherTokens, { data = vToken, ctnode = ctnode });
 				end
-
-				local bTargeted = NaturalSelection.isTargeted(selectedToken, vToken);
-
-				table.insert(aStackedTokens, { data = vToken, ctnode = ctnode, faction = sFaction, targeted = bTargeted });
-
-				-- save the token with the largest scale
-				if vToken.getScale() > largestToken.getScale() then
-					largestToken = vToken;
-				end
-			else
-				-- Save these tokens for the next step
-				table.insert(aOtherTokens, { data = vToken, ctnode = ctnode });
-			end
+				-- end overlap check
+			end 
+			-- end ct node or include non-ct tokens check
 		end
+		-- end session.host or token visibility echeck
 	end
+	-- end loop
 
 	-- if the largest token in the stack is not the one that was selected, then go through and find everything under the largest token
 	if largestToken.getId() ~= tokenId then
@@ -317,4 +341,8 @@ end
 
 function getTokenRounding()
 	return OptionsManager.getOption("NS_SIZE_ROUNDING") == "yes";
+end
+
+function includeNonCtTokens()
+	return OptionsManager.getOption("NS_INCLUDE_NON_CT") == "yes";
 end

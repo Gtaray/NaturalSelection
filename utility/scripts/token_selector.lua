@@ -170,8 +170,12 @@ function onTokenSelected(token, ctnode)
 	end
 
 	if self.getModifierKey("control") then
-		self.targetToken(image, ctnode);
-		self.bringTokenToTop(token);
+		if ctnode then
+			self.targetToken(image, ctnode);
+			self.bringTokenToTop(token);
+		else
+			Debug.console("Natural Selection: WARNING. Tried to target a token that doesn't exist on the combat tracker.")
+		end
 	else
 		self.selectToken(image, token);
 		self.bringTokenToTop(token);
