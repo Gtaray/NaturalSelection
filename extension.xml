@@ -17,6 +17,9 @@
 		<icon name="NaturalSelection" file="naturalSelection.png" />
 
 		<!-- STRINGS -->
+		<string name="menu_to_top">Send token to top</string>
+		<string name="menu_to_bottom">Send token to bottom</string>
+
 		<string name="option_header_natural_selection">Natural Selection</string>
 		<string name="option_label_location">Location of the token selector window relative to the selected token.</string>
 		<string name="option_val_location_left">Left</string>
