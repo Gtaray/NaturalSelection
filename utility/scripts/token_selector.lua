@@ -163,18 +163,26 @@ end
 -----------------------------------
 -- ACTIONS
 -----------------------------------
-function onTokenSelected(token, ctnode)
+function onTokenSelected(token, ctnode, bTop)
 	local image = ImageManager.getImageControl(token);
 	if not image then
 		return true;
 	end
 
 	if self.getModifierKey("control") then
-		self.targetToken(image, ctnode);
-		self.bringTokenToTop(token);
+		if ctnode then
+			self.targetToken(image, ctnode);
+			self.bringTokenToTop(token);
+		else
+			Debug.console("Natural Selection: WARNING. Tried to target a token that doesn't exist on the combat tracker.")
+		end
 	else
-		self.selectToken(image, token);
-		self.bringTokenToTop(token);
+		if bTop then
+			self.selectToken(image, token);
+			self.bringTokenToTop(token);
+		else
+			self.pushTokenToBottom(token)
+		end
 	end
 
 	self.close();
@@ -208,11 +216,15 @@ function selectToken(image, token)
 			image.clearSelectedTokens();
 		end
 
-		-- Only select the token if it's not already selected.
-		-- This is effectively a toggle.
-		if not image.isTokenSelected(tokenId) then
-			image.selectToken(tokenId, not bIsTokenSelected);
-		end
+		-- Toggle selection
+		local bIsTokenSelected = image.isTokenSelected(tokenId);
+		image.selectToken(tokenId, not bIsTokenSelected);
+	end
+end
+
+function deselectToken(image, token)
+	if image and token then
+		image.selectToken(token.getId(), false);
 	end
 end
 
@@ -221,4 +233,13 @@ function bringTokenToTop(token)
 	local x, y = token.getPosition();
 	token.setPosition(x + 1, y + 1);
 	token.setPosition(x, y);
+end
+
+function pushTokenToBottom(token)
+	for _, tokendata in ipairs(aTokens) do
+		-- We want to move every token except for the selected one.
+		if tokendata.data.getId() ~= token.getId() then
+			self.bringTokenToTop(tokendata.data);
+		end
+	end
 end

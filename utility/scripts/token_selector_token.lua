@@ -1,6 +1,19 @@
 local ctnode;
 local token;
 
+function onInit()
+	-- registerMenuItem(Interface.getString("menu_to_top"), "listinsert", 1);
+	registerMenuItem(Interface.getString("menu_to_bottom"), "listinsert", 5);
+end
+
+function onMenuSelection(selection)
+	if selection == 1 then
+		-- onTokenSelected(true);
+	elseif selection == 5 then
+		onTokenSelected(false);
+	end
+end
+
 function setData(tokendata, bTargeting)
 	ctnode = tokendata.ctnode;
 	token = tokendata.data
@@ -26,8 +39,8 @@ function onDrop(x, y, dragdata)
 	window.onDroppedOnToken(token, dragdata);
 end
 
-function onTokenSelected()
+function onTokenSelected(bTop)
 	if window.onTokenSelected then
-		window.onTokenSelected(token, ctnode);
+		window.onTokenSelected(token, ctnode, bTop);
 	end
 end
