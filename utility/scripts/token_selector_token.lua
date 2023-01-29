@@ -32,7 +32,7 @@ function onClickRelease(button)
 		return;
 	end
 
-	self.onTokenSelected();
+	self.onTokenSelected(true);
 end
 
 function onDrop(x, y, dragdata)
