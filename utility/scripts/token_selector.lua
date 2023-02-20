@@ -184,7 +184,7 @@ function onTokenSelected(token, ctnode, bTop)
 		end
 	else
 		if bTop then
-			self.selectToken(image, token);
+			self.selectToken(image, token, ctnode);
 			self.bringTokenToTop(token);
 		else
 			self.pushTokenToBottom(token)
@@ -212,10 +212,11 @@ function targetToken(image, ctnode)
 	end
 end
 
-function selectToken(image, token)
+function selectToken(image, token, ctnode)
 	-- We only want to select a token if the owner is the one clicking it
 	-- otherwise we leave the selection alone.
-	if self.isOwner(token) then
+	-- If the ctnode is nil, then let anyone select the token, it's not a CT token.
+	if self.isOwner(token) or ctnode == nil then
 		local tokenId = token.getId();
 
 		if not self.getModifierKey("shift") then
