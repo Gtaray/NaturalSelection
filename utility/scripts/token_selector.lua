@@ -82,8 +82,10 @@ function initialize()
 			end
 		end
 
-		local sTokenName = self.getTokenName(token.ctnode);
-		control.setTooltipText(sTokenName);
+		if token.ctnode then
+			local sTokenName = self.getTokenName(token.ctnode);
+			control.setTooltipText(sTokenName);
+		end
 
 		control.setData(token, bTargetingMode);
 		token.control = control;
@@ -95,6 +97,10 @@ end
 ----------------------------
 
 function getTokenName(ctnode)
+	if not ctnode then
+		return "";
+	end
+	
 	local rActor = ActorManager.resolveActor(ctnode);
 
 	if Session.IsHost then
