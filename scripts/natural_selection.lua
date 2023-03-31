@@ -18,7 +18,7 @@ function onInit()
 
 	
 	local nThreshold = tonumber(OptionsManager.getOption("NS_SELECTOR_THRESHOLD"));
-	if nThreshold % 10 ~= 0 then
+	if nThreshold % 10 ~= 0 and nThreshold ~= 75 then
 		local newThreshold = MathHelpers.roundToNearestMultiple(nThreshold, 10);
 		Debug.console("Natural Selection: Outdated threshold percent (" .. nThreshold .. "). Adjusting to " .. newThreshold);
 		OptionsManager.setOption("NS_SELECTOR_THRESHOLD", tostring(newThreshold));
