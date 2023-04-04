@@ -15,6 +15,8 @@ function onInit()
 			{ labels = "option_val_no", values = "no", baselabel = "option_val_yes", baseval = "yes", default = "no" })
 	OptionsManager.registerOption2("NS_INCLUDE_NON_CT", true, "option_header_natural_selection", "option_label_include_non_ct", "option_entry_cycler",
 			{ labels = "option_val_no", values = "no", baselabel = "option_val_yes", baseval = "yes", default = "no" })
+	OptionsManager.registerOption2("NS_EXPANDED_STACK", true, "option_header_natural_selection", "option_label_expanded_stack_detection", "option_entry_cycler",
+			{ labels = "option_val_no", values = "no", baselabel = "option_val_yes", baseval = "yes", default = "yes" })
 
 	
 	local nThreshold = tonumber(OptionsManager.getOption("NS_SELECTOR_THRESHOLD"));
@@ -132,11 +134,13 @@ function getStackedTokens(token, image)
 	end
 	-- end loop
 
-	-- if the largest token in the stack is not the one that was selected, then go through and find everything under the largest token
-	if largestToken.getId() ~= tokenId then
-		for _,tokendata in ipairs(aOtherTokens) do
-			if NaturalSelection.isOverlapping(largestToken, tokendata.data, image) then
-				table.insert(aStackedTokens, tokendata);
+	if OptionsManager.getOption("NS_EXPANDED_STACK") == "yes" then
+		-- if the largest token in the stack is not the one that was selected, then go through and find everything under the largest token
+		if largestToken.getId() ~= tokenId then
+			for _,tokendata in ipairs(aOtherTokens) do
+				if NaturalSelection.isOverlapping(largestToken, tokendata.data, image) then
+					table.insert(aStackedTokens, tokendata);
+				end
 			end
 		end
 	end

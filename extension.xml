@@ -3,7 +3,7 @@
 <root release="3.3.3" version="3.3.3">
 	<properties>
 		<name>Feature: Natural Selection</name>
-		<version>1.7.3</version>
+		<version>1.7.4</version>
 		<author>Saagael</author>
 		<description>Adds a way to select a specify token when multiple tokens are stacked together on a map</description>
 	</properties>
@@ -56,5 +56,7 @@
 		<string name="option_val_calc_circle">Circular</string>
 
 		<string name="option_label_include_non_ct">Include selection for tokens that are not on the combat tracker.</string>
+
+		<string name="option_label_expanded_stack_detection">When detecting token stacks, include all tokens under the largest token in the stack.</string>
 	</base>
 </root>
