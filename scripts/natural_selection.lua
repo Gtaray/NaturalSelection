@@ -17,6 +17,13 @@ function onInit()
 			{ labels = "option_val_no", values = "no", baselabel = "option_val_yes", baseval = "yes", default = "no" })
 	OptionsManager.registerOption2("NS_EXPANDED_STACK", true, "option_header_natural_selection", "option_label_expanded_stack_detection", "option_entry_cycler",
 			{ labels = "option_val_no", values = "no", baselabel = "option_val_yes", baseval = "yes", default = "yes" })
+	OptionsManager.registerOption2("NS_WIDGET_LOCATION", true, "option_header_natural_selection", "option_label_widget_location", "option_entry_cycler",
+			{ labels = "option_val_location_left|option_val_location_topleft|option_val_location_top|option_val_location_topright|option_val_location_right|option_val_location_bottomright|option_val_location_bottom|option_val_location_bottomleft", values = "left|topleft|top|topright|right|bottomright|bottom|bottomleft", baselabel = "option_val_location_center", baseval = "center", default = "topright" })
+	OptionsManager.registerOption2("NS_WIDGET_ENABLED", true, "option_header_natural_selection", "option_label_widget_enable", "option_entry_cycler",
+			{ labels = "option_val_no", values = "no", baselabel = "option_val_yes", baseval = "yes", default = "no" })
+
+	OptionsManager.registerCallback("NS_WIDGET_ENABLED", onWidgetEnabledUpdated)
+	OptionsManager.registerCallback("NS_WIDGET_LOCATION", onWidgetLocationUpdated)
 
 	
 	local nThreshold = tonumber(OptionsManager.getOption("NS_SELECTOR_THRESHOLD"));
@@ -27,13 +34,204 @@ function onInit()
 	end
 
 	Token.onClickRelease = onTokenClickRelease;
+	Token.onDragEnd = onTokenMoveEnd;
+	Token.onWheel = onTokenWheel;
+
+	TokenManager.registerWidgetSet("stack", { "stacked" })
 
 	CombatManager.setCustomTurnStart(onTurnStart);
+
+	Interface.addKeyedEventHandler("onWindowOpened", "imagewindow", NaturalSelection.initializeTokenWidgets);
 end
 
 -- Close the selector every time the turn changes	
 function onTurnStart(nodeCt)
 	NaturalSelection.closeTokenSelector();
+end
+
+function initializeTokenWidgets(window)
+	local aTokens = window.image.getTokens();
+	if #aTokens > 1 then
+		-- Initialize the widget for stacked tokens
+		NaturalSelection.onTokenMoveEnd(aTokens[1]);
+	end
+end
+
+----------------------------------------------
+-- TOKEN WIDGET MANAGEMENT
+----------------------------------------------
+function updateWidgetForTokens(aTokens, bStacked)
+	for _, token in ipairs(aTokens) do
+		local nodeCT = CombatManager.getCTFromToken(token);
+		NaturalSelection.updateWidget(token, nodeCT, bStacked)
+	end
+end
+
+function updateWidget(tokenCT, nodeCT, bStacked)
+	if not tokenCT then
+		return;
+	end
+	if not nodeCT then
+		return;
+	end
+
+	local aWidgets = TokenManager.getWidgetList(tokenCT, "stack");
+	local wStackWidget = aWidgets["stacked"];
+
+	-- If bStacked is nil, then we only want to update widget locations if they exist
+	if bStacked == nil then
+		bStacked = wStackWidget ~= nil;
+	end
+
+	if wStackWidget and not bStacked then
+		wStackWidget.destroy();
+		wStackWidget = nil;
+	elseif not wStackWidget and bStacked then
+		-- Only add the widget if the option is enabled.
+		if NaturalSelection.isStackWidgetEnabled() then
+			wStackWidget = tokenCT.addBitmapWidget();
+			wStackWidget.setName("stacked");		
+		end
+	end
+
+	if wStackWidget then
+		-- Scale the widget size based on the token's size so it is obvious.
+		local nTokenWidth, nTokenHeight = tokenCT.getImageSize();
+		local nTokenScale = tokenCT.getScale();
+		local nActualWidth = nTokenWidth * nTokenScale;
+		local nActualHeight = nTokenHeight * nTokenScale;
+		-- local nWidgetSize = nActualWidth * 0.4;
+		local nWidgetSize = 30;
+
+		local sPosition = NaturalSelection.getWidgetLocationOption();
+		local nWidgetX, nWidgetY = 0, 0;
+
+		if sPosition == "left" then
+			nWidgetX = nWidgetSize / 2;
+			nWidgetY = 0;
+		elseif sPosition == "top" then
+			nWidgetX = 0
+			nWidgetY = nWidgetSize / 2;
+		elseif sPosition == "right" then
+			nWidgetX = -nWidgetSize / 2;
+			nWidgetY = 0
+		elseif sPosition == "bottom" then
+			nWidgetX = 0
+			nWidgetY = -nWidgetSize / 2;
+		elseif sPosition == "topleft" then
+			nWidgetX = nWidgetSize / 2;
+			nWidgetY = nWidgetSize / 2;
+		elseif sPosition == "topright" then
+			nWidgetX = -nWidgetSize / 2;
+			nWidgetY = nWidgetSize / 2;
+		elseif sPosition == "bottomright" then
+			nWidgetX = -nWidgetSize / 2;
+			nWidgetY = -nWidgetSize / 2;
+		elseif sPosition == "bottomleft" then
+			nWidgetX = nWidgetSize / 2;
+			nWidgetY = -nWidgetSize / 2;
+		elseif sPosition == "center" then
+			nWidgetX = 0;
+			nWidgetY = 0;
+		end
+
+		wStackWidget.setBitmap("widget_stacked");
+		wStackWidget.setTooltipText("Is stacked with other tokens");
+		wStackWidget.setSize(nWidgetSize, nWidgetSize);
+		wStackWidget.setPosition(sPosition, nWidgetX, nWidgetY);
+	end
+end
+
+function onTokenWheel(tokenCT)
+	NaturalSelection.onTokenMoveEnd(tokenCT);
+end
+
+function recalculateStackWidgets(image)
+	local aTokens = image.getTokens()
+	if #aTokens <= 1 then
+		return;
+	end
+
+	NaturalSelection.onTokenMoveEnd(aTokens[1]);
+end
+
+----------------------------------------------
+-- ON TOKEN MOVE
+----------------------------------------------
+function onTokenMoveEnd(token, dragdata)
+	if not NaturalSelection.isStackWidgetEnabled() then
+		return;
+	end
+
+	if not token then
+		return;
+	end
+
+	local image = ImageManager.getImageControl(token);
+	if not image then
+		return;
+	end
+
+	-- Set up a dictionary here, which is much easier to handle than an array
+	local aRemaining, nCount = NaturalSelection.getTokenDictionaryOrderedById(image.getTokens());
+	if nCount <= 1 then
+		return;
+	end
+
+	local aFinalStack = {};
+	local aFinalUnstackedList = {};
+
+	-- Iterate until every token has been checked
+	-- We can bail if there's only one token remaining because there's no possible way it could stack with itself.
+	while nCount > 0 do
+		-- Grab the last token in the list and see what it is stacked with
+		local key, currenttoken = NaturalSelection.getFirstInDictionary(aRemaining)
+		local aChecked, nStackCount = NaturalSelection.getTokenDictionaryOrderedById(NaturalSelection.getStackedTokens(currenttoken));
+
+		-- only add to the final list if there are multiple things in the stack
+		local bAddToFinalStackList = nStackCount > 1;
+
+		-- aChecked will always at least return 1 token, so we this will run even if there's nothing stacked with the token.
+		for id, checkedtoken in pairs(aChecked) do
+			if bAddToFinalStackList then
+				table.insert(aFinalStack, checkedtoken)
+			else
+				table.insert(aFinalUnstackedList, checkedtoken)
+			end
+
+			-- Clear out tokens that have already been checked
+			aRemaining[id] = nil;
+			nCount = nCount - 1; 
+		end
+	end
+
+	-- Now we have a list of all tokens on the image that are not stacked
+	NaturalSelection.updateWidgetForTokens(aFinalStack, true);
+	NaturalSelection.updateWidgetForTokens(aFinalUnstackedList, false);
+end
+
+function getTokenDictionaryOrderedById(aTokens)
+	local aDictionary = {};
+	local nCount = 0;
+
+	for _, imagetoken in ipairs(aTokens) do
+		local token = imagetoken;
+
+		-- This accounts for the getStackedTokens function returning a data object and not an array of tokeninstance
+		if imagetoken.data then
+			token = imagetoken.data
+		end
+
+		aDictionary[token.getId()] = token;
+		nCount = nCount + 1;
+	end
+	return aDictionary, nCount;
+end
+
+function getFirstInDictionary(aDictionary)
+	for key, value in pairs(aDictionary) do
+		return key, value;
+	end
 end
 
 ----------------------------------------------
@@ -70,6 +268,10 @@ end
 ----------------------------------------------
 
 function getStackedTokens(token, image)
+	if not image then
+		image = ImageManager.getImageControl(token);
+	end
+
 	local x, y = token.getPosition();
 	local tokenId = token.getId();
 	local tokens = image.getTokens();
@@ -349,4 +551,12 @@ end
 
 function includeNonCtTokens()
 	return OptionsManager.getOption("NS_INCLUDE_NON_CT") == "yes";
+end
+
+function isStackWidgetEnabled()
+	return OptionsManager.getOption("NS_WIDGET_ENABLED") == "yes";
+end
+
+function getWidgetLocationOption()
+	return OptionsManager.getOption("NS_WIDGET_LOCATION");
 end

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- 
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
+-->
+
+<root>
+	<windowclass name="imagewindow" merge="join">
+		<script>
+			function onInit()
+				if super and super.onInit then
+					super.onInit()
+				end
+				OptionsManager.registerCallback("NS_WIDGET_ENABLED", onWidgetEnabledUpdated)
+				OptionsManager.registerCallback("NS_WIDGET_LOCATION", onWidgetLocationUpdated)
+			end
+			function onWidgetEnabledUpdated()
+				if NaturalSelection.isStackWidgetEnabled() then
+					NaturalSelection.recalculateStackWidgets(image);
+				else
+					NaturalSelection.updateWidgetForTokens(image.getTokens(), false);
+				end
+			end
+			function onWidgetLocationUpdated()
+				NaturalSelection.updateWidgetForTokens(image.getTokens());
+			end
+		</script>
+	</windowclass>
+</root>
