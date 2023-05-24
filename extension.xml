@@ -3,11 +3,11 @@
 <root release="3.3.3" version="3.3.3">
 	<properties>
 		<name>Feature: Natural Selection</name>
-		<version>1.7.4</version>
+		<version>1.8.0</version>
 		<author>Saagael</author>
 		<description>Adds a way to select a specify token when multiple tokens are stacked together on a map</description>
 	</properties>
-	<announcement text="Natural Selection v1.7.3 by Saagael." icon="NaturalSelection" font="emotefont" />
+	<announcement text="Natural Selection v1.8.0 by Saagael." icon="NaturalSelection" font="emotefont" />
 	<base>
 		<includefile source="campaign/record_image.xml" />
 		<includefile source="utility/token_selector.xml" />
