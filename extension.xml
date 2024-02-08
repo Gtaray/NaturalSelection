@@ -3,18 +3,20 @@
 <root release="3.3.3" version="3.3.3">
 	<properties>
 		<name>Feature: Natural Selection</name>
-		<version>1.7.4</version>
+		<version>1.8.0</version>
 		<author>Saagael</author>
 		<description>Adds a way to select a specify token when multiple tokens are stacked together on a map</description>
 	</properties>
-	<announcement text="Natural Selection v1.7.3 by Saagael." icon="NaturalSelection" font="emotefont" />
+	<announcement text="Natural Selection v1.8.0 by Saagael." icon="NaturalSelection" font="emotefont" />
 	<base>
+		<includefile source="campaign/record_image.xml" />
 		<includefile source="utility/token_selector.xml" />
 
 		<script name="NaturalSelection" file="scripts/natural_selection.lua" />
 		<script name="MathHelpers" file="scripts/math_helpers.lua" />
 
 		<icon name="NaturalSelection" file="naturalSelection.png" />
+		<icon name="widget_stacked" file="stack.png" />
 
 		<!-- STRINGS -->
 		<string name="menu_to_top">Send token to top</string>
@@ -58,5 +60,8 @@
 		<string name="option_label_include_non_ct">Include selection for tokens that are not on the combat tracker.</string>
 
 		<string name="option_label_expanded_stack_detection">When detecting token stacks, include all tokens under the largest token in the stack.</string>
+
+		<string name="option_label_widget_enable">Token Indicator: Add icon to tokens that are part of a stack. This may cause performance issues when moving and resizing tokens, especially when there are lots of tokens on a map.</string>
+		<string name="option_label_widget_location">Token Indicator: Location of the stacked widget that appears on a token when it is part of a stack.</string>
 	</base>
 </root>
