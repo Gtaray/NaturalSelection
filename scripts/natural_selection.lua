@@ -242,15 +242,15 @@ function onTokenClickRelease(token, button, image)
 	-- Since double clicking tokens doesn't really work any more, we move that to middle mouse click
 	if button == 2 then
 		TokenManager.onDoubleClick(token, image);	
-		return true;
+		return;
 	end
 
 	if token == nil or image == nil or button ~= 1 then
-		return false;
+		return;
 	end
 
 	if not NaturalSelection.isEnabled() then
-		return false;
+		return;
 	end
 
 	local aStackedTokens = NaturalSelection.getStackedTokens(token, image);
@@ -259,7 +259,7 @@ function onTokenClickRelease(token, button, image)
 		return NaturalSelection.openTokenSelector(token, aStackedTokens, image);
 	else
 		NaturalSelection.closeTokenSelector();
-		return false;
+		return;
 	end
 end
 
@@ -399,9 +399,6 @@ function openTokenSelector(selectedToken, aStackedTokens, image)
 	end
 	window.initialize();
 
-	-- When you close the image window, it should also close this selector window.
-	image.window.onClose = NaturalSelection.onImageWindowClosed;
-
 	NaturalSelection.placeWindow(window, image, selectedToken);
 
 	return window;
@@ -490,18 +487,6 @@ function calculateWindowOffsets(image, token, x, y,
 
 	-- this moves it to the upper right corner
 	return x + xOffset, y + yOffset;
-end
-
---------------------------------------------------------------
--- ImageWindow events
---------------------------------------------------------------
-
-function onImageWindowClosed()
-	NaturalSelection.closeTokenSelector();
-
-	if super and super.onClose then
-		super.onClose()
-	end
 end
 
 --------------------------------------------------------------

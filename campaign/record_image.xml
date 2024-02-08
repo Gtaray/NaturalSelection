@@ -15,6 +15,13 @@
 				OptionsManager.registerCallback("NS_WIDGET_ENABLED", onWidgetEnabledUpdated)
 				OptionsManager.registerCallback("NS_WIDGET_LOCATION", onWidgetLocationUpdated)
 			end
+			function onClose()
+				NaturalSelection.closeTokenSelector();
+
+				if super and super.onClose then
+					super.onClose()
+				end
+			end
 			function onWidgetEnabledUpdated()
 				if NaturalSelection.isStackWidgetEnabled() then
 					NaturalSelection.recalculateStackWidgets(image);
