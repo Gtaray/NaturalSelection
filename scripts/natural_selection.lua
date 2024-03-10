@@ -37,7 +37,7 @@ function onInit()
 	Token.onDragEnd = onTokenMoveEnd;
 	Token.onWheel = onTokenWheel;
 
-	TokenManager.registerWidgetSet("stack", { "stacked" })
+	--TokenManager.registerWidgetSet("stack", { "stacked" })
 
 	CombatManager.setCustomTurnStart(onTurnStart);
 
@@ -75,8 +75,7 @@ function updateWidget(tokenCT, nodeCT, bStacked)
 		return;
 	end
 
-	local aWidgets = TokenManager.getWidgetList(tokenCT, "stack");
-	local wStackWidget = aWidgets["stacked"];
+	local wStackWidget = tokenCT.findWidget("stack");
 
 	-- If bStacked is nil, then we only want to update widget locations if they exist
 	if bStacked == nil then
@@ -84,13 +83,16 @@ function updateWidget(tokenCT, nodeCT, bStacked)
 	end
 
 	if wStackWidget and not bStacked then
-		wStackWidget.destroy();
+		tokenCT.deleteWidget("stack");
 		wStackWidget = nil;
 	elseif not wStackWidget and bStacked then
 		-- Only add the widget if the option is enabled.
 		if NaturalSelection.isStackWidgetEnabled() then
-			wStackWidget = tokenCT.addBitmapWidget();
-			wStackWidget.setName("stacked");		
+			local tWidget = {
+				name = "stacked",
+				icon = "stack",
+			}
+			wStackWidget = tokenCT.addBitmapWidget(tWidget);
 		end
 	end
 
