@@ -236,17 +236,9 @@ function deselectToken(image, token)
 end
 
 function bringTokenToTop(token)
-	-- Hacky hack to get the token to the top of the stack.
-	local x, y = token.getPosition();
-	token.setPosition(x + 1, y + 1);
-	token.setPosition(x, y);
+	token.bringToFront();
 end
 
 function pushTokenToBottom(token)
-	for _, tokendata in ipairs(aTokens) do
-		-- We want to move every token except for the selected one.
-		if tokendata.data.getId() ~= token.getId() then
-			self.bringTokenToTop(tokendata.data);
-		end
-	end
+	token.sendToBack();
 end

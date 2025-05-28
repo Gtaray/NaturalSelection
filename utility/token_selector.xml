@@ -7,6 +7,9 @@
 			<minimum width="50" height="50" />
 			<dynamic />
 		</sizelimits>
+		<placement>
+			<nosave />
+		</placement>
 		<script file="utility/scripts/token_selector.lua" />
 		<sheetdata>
 		</sheetdata>

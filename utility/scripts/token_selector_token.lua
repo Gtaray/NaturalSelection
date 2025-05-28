@@ -2,14 +2,14 @@ local ctnode;
 local token;
 
 function onInit()
-	-- registerMenuItem(Interface.getString("menu_to_top"), "listinsert", 1);
-	registerMenuItem(Interface.getString("menu_to_bottom"), "listinsert", 5);
+	registerMenuItem(Interface.getString("menu_to_top"), "tokentofront", 2);
+	registerMenuItem(Interface.getString("menu_to_bottom"), "tokentoback", 1);
 end
 
 function onMenuSelection(selection)
-	if selection == 1 then
-		-- onTokenSelected(true);
-	elseif selection == 5 then
+	if selection == 2 then
+		onTokenSelected(true);
+	elseif selection == 1 then
 		onTokenSelected(false);
 	end
 end

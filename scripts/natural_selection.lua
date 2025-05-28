@@ -44,6 +44,10 @@ function onInit()
 	Interface.addKeyedEventHandler("onWindowOpened", "imagewindow", NaturalSelection.initializeTokenWidgets);
 end
 
+function onTabletopClose()
+	NaturalSelection.closeTokenSelector();
+end
+
 -- Close the selector every time the turn changes	
 function onTurnStart(nodeCt)
 	NaturalSelection.closeTokenSelector();
