@@ -3,11 +3,11 @@
 <root release="3.3.3" version="3.3.3">
 	<properties>
 		<name>Feature: Natural Selection</name>
-		<version>1.11.0</version>
+		<version>1.12.0</version>
 		<author>Saagael</author>
 		<description>Adds a way to select a specify token when multiple tokens are stacked together on a map</description>
 	</properties>
-	<announcement text="Natural Selection v1.9.0 by Saagael." icon="NaturalSelection" font="emotefont" />
+	<announcement text="Natural Selection v1.12.0 by Saagael." icon="NaturalSelection" font="emotefont" />
 	<base>
 		<includefile source="campaign/record_image.xml" />
 		<includefile source="utility/token_selector.xml" />
@@ -23,7 +23,7 @@
 		<string name="menu_to_bottom">Send token to bottom</string>
 
 		<string name="option_header_natural_selection">Natural Selection</string>
-		<string name="option_label_location">Location of the token selector window relative to the selected token.</string>
+		<string name="option_label_location">Token Selector: Location of the token selector window relative to the selected token.</string>
 		<string name="option_val_location_left">Left</string>
 		<string name="option_val_location_topleft">Top Left</string>
 		<string name="option_val_location_top">Top</string>
@@ -34,11 +34,11 @@
 		<string name="option_val_location_bottomleft">Bottom Left</string>
 		<string name="option_val_location_center">Center</string>
 
-		<string name="option_label_enabled">Enable?</string>
+		<string name="option_label_enabled">Core: Enable?</string>
 		<string name="option_val_yes">Yes</string>
 		<string name="option_val_no">No</string>
 
-		<string name="option_label_overlap_threshold">Minimum percentage tokens need to overlap to trigger the selection window.</string>
+		<string name="option_label_overlap_threshold">Overlap Detection: Minimum percentage tokens need to overlap to trigger the selection window.</string>
 		<string name="option_val_threshold_disabled">Disabled</string>
 		<string name="option_val_threshold_10">10%</string>
 		<string name="option_val_threshold_20">20%</string>
@@ -48,20 +48,21 @@
 		<string name="option_val_threshold_75">75%</string>
 		<string name="option_val_threshold_100">100%</string>
 
-		<string name="option_label_size_rounding">Round token size up to the nearest grid size increment when calculating overlap.</string>
+		<string name="option_label_size_rounding">Overlap Detection: Round token size up to the nearest grid size increment when calculating overlap.</string>
 
-		<string name="option_label_square_grid_calc">Method of overlap calculation to use on square grids.</string>
-		<string name="option_label_hex_grid_calc">Method of overlap calculation to use on hex grids.</string>
-		<string name="option_label_iso_grid_calc">Method of overlap calculation to use on isometric grids.</string>
+		<string name="option_label_square_grid_calc">Overlap Detection: Method of overlap calculation to use on square grids.</string>
+		<string name="option_label_hex_grid_calc">Overlap Detection: Method of overlap calculation to use on hex grids.</string>
+		<string name="option_label_iso_grid_calc">Overlap Detection: Method of overlap calculation to use on isometric grids.</string>
 		<string name="option_val_calc_exact">Exact</string>
 		<string name="option_val_calc_square">Square</string>
 		<string name="option_val_calc_circle">Circular</string>
 
-		<string name="option_label_include_non_ct">Include selection for tokens that are not on the combat tracker.</string>
+		<string name="option_label_include_non_ct">Token Selector: Include selection for tokens that are not on the combat tracker.</string>
 
-		<string name="option_label_expanded_stack_detection">When detecting token stacks, include all tokens under the largest token in the stack.</string>
+		<string name="option_label_expanded_stack_detection">Overlap Detection: When detecting token stacks, include all tokens under the largest token in the stack.</string>
 
-		<string name="option_label_widget_enable">Token Indicator: Add icon to tokens that are part of a stack. This may cause performance issues when moving and resizing tokens, especially when there are lots of tokens on a map.</string>
-		<string name="option_label_widget_location">Token Indicator: Location of the stacked widget that appears on a token when it is part of a stack.</string>
+		<string name="option_label_widget_enable">Stack Indicator: Add icon to tokens that are part of a stack. This may cause performance issues when moving and resizing tokens, especially when there are lots of tokens on a map.</string>
+		<string name="option_label_widget_location">Stacks Indicator: Location of the stacked widget that appears on a token when it is part of a stack.</string>
+		<string name="option_label_hover_enable">Core: Open token selector menu on Hover instead of mouse click.</string>
 	</base>
 </root>

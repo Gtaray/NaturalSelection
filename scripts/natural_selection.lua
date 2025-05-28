@@ -21,6 +21,8 @@ function onInit()
 			{ labels = "option_val_location_left|option_val_location_topleft|option_val_location_top|option_val_location_topright|option_val_location_right|option_val_location_bottomright|option_val_location_bottom|option_val_location_bottomleft", values = "left|topleft|top|topright|right|bottomright|bottom|bottomleft", baselabel = "option_val_location_center", baseval = "center", default = "topright" })
 	OptionsManager.registerOption2("NS_WIDGET_ENABLED", true, "option_header_natural_selection", "option_label_widget_enable", "option_entry_cycler",
 			{ labels = "option_val_no", values = "no", baselabel = "option_val_yes", baseval = "yes", default = "no" })
+	OptionsManager.registerOption2("NS_HOVER_ENABLED", true, "option_header_natural_selection", "option_label_hover_enable", "option_entry_cycler",
+			{ labels = "option_val_no", values = "no", baselabel = "option_val_yes", baseval = "yes", default = "no" })
 
 	OptionsManager.registerCallback("NS_WIDGET_ENABLED", onWidgetEnabledUpdated)
 	OptionsManager.registerCallback("NS_WIDGET_LOCATION", onWidgetLocationUpdated)
@@ -36,6 +38,7 @@ function onInit()
 	Token.onClickRelease = onTokenClickRelease;
 	Token.onDragEnd = onTokenMoveEnd;
 	Token.onWheel = onTokenWheel;
+	Token.onHover = onHover;
 
 	--TokenManager.registerWidgetSet("stack", { "stacked" })
 
@@ -244,17 +247,7 @@ end
 -- ON CLICK
 ----------------------------------------------
 
-function onTokenClickRelease(token, button, image)
-	-- Since double clicking tokens doesn't really work any more, we move that to middle mouse click
-	if button == 2 then
-		TokenManager.onDoubleClick(token, image);	
-		return;
-	end
-
-	if token == nil or image == nil or button ~= 1 then
-		return;
-	end
-
+function ProcessNaturalSelectionMenu(token, image)
 	if not NaturalSelection.isEnabled() then
 		return;
 	end
@@ -267,6 +260,32 @@ function onTokenClickRelease(token, button, image)
 		NaturalSelection.closeTokenSelector();
 		return;
 	end
+end
+
+function onTokenClickRelease(token, button, image)
+	-- Since double clicking tokens doesn't really work any more, we move that to middle mouse click
+	if button == 2 then
+		TokenManager.onDoubleClick(token, image);
+		return;
+	end
+
+	if token == nil or image == nil or button ~= 1 then
+		return;
+	end
+
+	if NaturalSelection.isHoverEnabled() then
+		return;
+	end
+	
+	ProcessNaturalSelectionMenu(token, image);
+end
+
+-- bring up token selector when hovering and bring down when not
+function onHover(tokenMap, bOver)
+	if not NaturalSelection.isHoverEnabled() then
+		return;
+	end
+	ProcessNaturalSelectionMenu(tokenMap, ImageManager.getImageControl(tokenMap));
 end
 
 ----------------------------------------------
@@ -501,6 +520,10 @@ end
 
 function isEnabled()
 	return OptionsManager.getOption("NS_ENABLED") == "yes";
+end
+
+function isHoverEnabled() 
+	return OptionsManager.getOption("NS_HOVER_ENABLED") == "yes"
 end
 
 function getWindowLocationOption()
