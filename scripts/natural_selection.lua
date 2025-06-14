@@ -1,3 +1,6 @@
+OOB_MSGTYPE_NS_SENDTOKENTOTOP = "ns_tokentotop";
+OOB_MSGTYPE_NS_SENDTOKENTOBOTTOM = "ns_tokentobottom";
+
 function onInit()
 	OptionsManager.registerOption2("NS_ENABLED", true, "option_header_natural_selection", "option_label_enabled", "option_entry_cycler",
 			{ labels = "option_val_no", values = "no", baselabel = "option_val_yes", baseval = "yes", default = "yes" })
@@ -45,6 +48,9 @@ function onInit()
 	CombatManager.setCustomTurnStart(onTurnStart);
 
 	Interface.addKeyedEventHandler("onWindowOpened", "imagewindow", NaturalSelection.initializeTokenWidgets);
+
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_NS_SENDTOKENTOTOP, handleTokenToFrontOob);
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_NS_SENDTOKENTOBOTTOM, handleTokenToBackOob);
 end
 
 function onTabletopClose()
@@ -61,6 +67,63 @@ function initializeTokenWidgets(window)
 	if #aTokens > 1 then
 		-- Initialize the widget for stacked tokens
 		NaturalSelection.onTokenMoveEnd(aTokens[1]);
+	end
+end
+
+----------------------------------------------
+-- TOKEN Z-LAYERING OOBS
+----------------------------------------------
+function sendTokenToFrontOob(tokeninstance)
+	local tokenImage = tokeninstance.getContainerNode();
+
+	if not tokenImage then 
+		return;
+	end
+
+	local msg = {
+		type = OOB_MSGTYPE_NS_SENDTOKENTOTOP,
+		sTokenImage = DB.getPath(tokenImage),
+		nTokenId = tokeninstance.getId()
+	};
+
+	Comm.deliverOOBMessage(msg, "");
+end
+
+function handleTokenToFrontOob(msg)
+	if not Session.IsHost then
+		return;
+	end
+
+	local tokeninstance = Token.getToken(msg.sTokenImage, msg.nTokenId);
+	if tokeninstance then
+		tokeninstance.bringToFront();
+	end
+end
+
+function sendTokenToBackOob(tokeninstance)
+	local tokenImage = tokeninstance.getContainerNode();
+
+	if not tokenImage then 
+		return;
+	end
+
+	local msg = {
+		type = OOB_MSGTYPE_NS_SENDTOKENTOBOTTOM,
+		sTokenImage = DB.getPath(tokenImage),
+		nTokenId = tokeninstance.getId()
+	};
+
+	Comm.deliverOOBMessage(msg, "");
+end
+
+function handleTokenToBackOob(msg)
+	if not Session.IsHost then
+		return;
+	end
+
+	local tokeninstance = Token.getToken(msg.sTokenImage, msg.nTokenId);
+	if tokeninstance then
+		tokeninstance.sendToBack();
 	end
 end
 

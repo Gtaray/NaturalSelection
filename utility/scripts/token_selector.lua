@@ -236,9 +236,17 @@ function deselectToken(image, token)
 end
 
 function bringTokenToTop(token)
-	token.bringToFront();
+	if Session.IsHost then
+		token.bringToFront();
+	else
+		NaturalSelection.sendTokenToFrontOob(token)
+	end
 end
 
 function pushTokenToBottom(token)
-	token.sendToBack();
+	if Session.IsHost then
+		token.sendToBack();
+	else
+		NaturalSelection.sendTokenToBackOob(token)
+	end
 end
